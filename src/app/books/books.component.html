@@ -1,0 +1,43 @@
+<button mat-flat-button class="btn btn-success" (click)="AddBookDialog()">
+  Add Book
+</button>
+<p class="center-wrapper" *ngIf=" books.length < 1 && !isloading">no data available</p>
+<table class="table" *ngIf="!isloading && books.length >= 1">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>isbm</th>
+      <th>price</th>
+      <th>published At</th>
+      <th>Pages</th>
+      <th>Language</th>
+      <th>actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let book of books" >
+      <td>{{ book.id }}</td>
+      <td>{{ book.name }}</td>
+      <td>{{ book.isbm }}</td>
+      <td>{{ book.price }}</td>
+      <td>{{ book.publishedAt | date: short }}</td>
+      <td>{{ book.pages }}</td>
+      <td>{{ book.language }}</td>
+      <td>
+        <button type="button" class="btn btn-light" matButton="elevated" (click)="onEditDialog(book)">edit</button> |
+        <button
+          type="button"
+          class="btn btn-danger"
+          matButton="elevated"
+          (click)="onDeleteDialog(book.id, book.name)"
+        >
+          Delete
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<div class="center-wrapper">
+  <mat-spinner *ngIf="isloading"></mat-spinner>
+</div>

@@ -1,0 +1,38 @@
+
+<h2 mat-dialog-title>edit book</h2>
+<mat-dialog-content>
+  <form [formGroup]="clientForm">
+    <mat-form-field appearance="fill" style="width: 100%">
+      <mat-label>Name</mat-label>
+      <input matInput formControlName="Name"/>
+    </mat-form-field>
+    <mat-form-field appearance="fill" style="width: 100%">
+      <mat-label>ISBM</mat-label>
+      <input matInput formControlName="isbm" />
+    </mat-form-field>
+    <mat-form-field appearance="fill" style="width: 100%">
+      <mat-label>Price</mat-label>
+      <input matInput type="number" min="0" formControlName="price" />
+    </mat-form-field>
+    <mat-form-field appearance="fill" style="width: 100%">
+      <mat-label>Publihed At</mat-label>
+      <input matInput type="date" formControlName="publishedAt" />
+    </mat-form-field>
+    <mat-form-field appearance="fill" style="width: 100%">
+      <mat-label>pages</mat-label>
+      <input matInput type="number" min="0" formControlName="pages" />
+    </mat-form-field>
+<mat-form-field appearance="fill" style="width: 100%">
+  <mat-label>Language</mat-label>
+  <mat-select formControlName="language">
+    <mat-option *ngFor="let language of languages"  [value]="language">
+      {{language}}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Cancel</button>
+  <button mat-flat-button color="primary" (click)="edit()">edit</button>
+</mat-dialog-actions>
