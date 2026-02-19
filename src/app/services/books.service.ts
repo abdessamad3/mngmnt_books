@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { book } from '../books/books.model';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -10,7 +11,7 @@ import { Observable } from 'rxjs';
 export class BooksService {
   private apiUrl = environment.apiUrl;
   private token =
-    'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3NzE0MTczNDMsImV4cCI6MTc3MTQyMDk0Mywicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoiYWJkZXNzYW1hZGppYnJhbmUyQGdtYWlsLmNvbSJ9.agVyGlt9HPpnR_Y4JBDDPA1U8dl76S76m5y-slZGwOzyk9Yo04JEl7H5RzpnTi1sAzzhZTjujIHVPERFJ6BAie7BtaAeRdXTXpCoudNtNePyi_geRc_55ZYU-lKNp79k7BAVJ5P8ezmEnJi1nthhFrcGXfY7-03sqALRVbmEcCTUCtuSKWyOsiriH4q2ZMN0zI-vnyaAQ7uYZbX6I-4NGbsHtK-i92hP9d2T9h5lqDKS7i4UaPM6t09dlxi1SEroOj8Hz_UANhT9OqL-KI3UufDfEB2G_cY-nZBRLeggD9Bx9BWzn2dxcoO-2UC7reQklndEO23OmC3GEPNT6llMSg'; // or a hardcoded token for testing
+    'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3NzE1MDYxMjksImV4cCI6MTc3MTUwOTcyOSwicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoiYWJkZXNzYW1hZGppYnJhbmUyQGdtYWlsLmNvbSJ9.VeHl4X4jy-860FHj-lHw5OqqI0kfDp1IHpi97Pn6lkWPVmsDXEGR4_OMJT13CmY72VVeZJDkGRPAe-NI4EdyY0h2aePN0C_OABvfO4SQ9BJXWiTBfmeT7yV3rNjQ8-EdY7XZ5JoM1rzjDvxK7_922pQ3d3L0rv5gYOHYVpeQpas80AIKmHYfFu89yW_zov7Slfby1FDyQR_z2Z_ES6gb6IlrZde6iV3H0Xc-ViFKTDmOVXGNmFhQPO2XKUiX-mA5TTQ-bBdcjFrstzkONEzHnt5EWLFpITXXq5CqEWx0pHIZ2qgKAtb8A0Q7YSeV-c4gidsZYyk6pveY1A_Loz5A0Q'; // or a hardcoded token for testing
 
   constructor(private http: HttpClient) {}
 
@@ -19,7 +20,12 @@ export class BooksService {
       ? new HttpHeaders({ Authorization: `Bearer ${this.token}` })
       : undefined;
 
-    return this.http.get<book[]>(`${this.apiUrl}/${endpoint}`, { headers });
+    return this.http.get<book[]>(`${this.apiUrl}/${endpoint}`, { headers }).pipe(
+      catchError((err) => {
+        console.error('HTTP error', err);
+        return throwError('Failed to fetch books. Please try again later.');
+      })
+    );;
   }
 
   postData(endpoint: string, payload: book): Observable<book[]> {

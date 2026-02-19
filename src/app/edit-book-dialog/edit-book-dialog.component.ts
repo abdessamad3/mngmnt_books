@@ -28,10 +28,11 @@ export class EditBookDialogComponent implements OnInit
           Name: [data.data.name, Validators.required],
           isbm: [data.data.isbm, Validators.required],
           price: [data.data.price, Validators.required],
-          publishedAt:[data.data.publishedAt,Validators.required],
+          publishedAt:[data.data.publishedAt? new Date(data.data.publishedAt) : null,Validators.required],
           pages: [data.data.pages, Validators.required],
           language:[data.data.language, Validators.required]
         });
+        console.log(this.clientForm);
   }
 
   edit() {

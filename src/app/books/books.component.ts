@@ -14,10 +14,14 @@ import { EditBookDialogComponent } from '../edit-book-dialog/edit-book-dialog.co
 export class BooksComponent implements OnInit {
   books: book[] = [];
   isloading = false;
+  error = null;
   constructor(
     private BooksService: BooksService,
     private dialog: MatDialog,
   ) {}
+  ngOnInit(): void {
+    this.fetchdata();
+  }
   AddBookDialog() {
     const dialogRef = this.dialog.open(AddBookDialogComponent, {
       width: '60wv',
@@ -49,7 +53,7 @@ export class BooksComponent implements OnInit {
     const dialogRef = this.dialog.open(DeliteBookDialogComponent, {
       width: '250px',
       data: {
-        id: `${id}`,
+        id: id,
         title: `delete ${name}`,
         message: `Are you sure you want to delete ${name} ?`,
       },
@@ -58,6 +62,11 @@ export class BooksComponent implements OnInit {
       if (confirm) {
         this.onDelete(id);
       }
+    });
+  }
+  onDelete(id: number) {
+    this.BooksService.deleteData('books', id).subscribe((res) => {
+      this.fetchdata();
     });
   }
 
@@ -76,12 +85,7 @@ export class BooksComponent implements OnInit {
       }
     });
   }
-  onDelete(id: number) {
-    this.BooksService.deleteData('books', id).subscribe((res) => {
-      this.fetchdata();
-    });
-  }
-  //TODO update the service book
+
   onEdit(book: book) {
     console.log(book);
     this.BooksService.editData('books', book.id, book).subscribe((res) => {
@@ -89,14 +93,19 @@ export class BooksComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {
-    this.fetchdata();
-  }
   fetchdata(): void {
     this.isloading = true;
-    this.BooksService.getBooks('books').subscribe((res) => {
-      this.books = res;
-      this.isloading = false;
+    this.BooksService.getBooks('books').subscribe({
+      next: (res) => {
+        this.books = res;
+        this.isloading = false;
+        this.error = null;
+      },
+      error: (err: any) => {
+        this.isloading = false;
+        // err may be Error or HttpErrorResponse
+        this.error = err || 'Unknown error occurred';
+      }
     });
   }
 }

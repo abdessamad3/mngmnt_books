@@ -1,7 +1,7 @@
 <button mat-flat-button class="btn btn-success" (click)="AddBookDialog()">
   Add Book
 </button>
-<p class="center-wrapper" *ngIf=" books.length < 1 && !isloading">no data available</p>
+<p class="center-wrapper" *ngIf=" books.length < 1 && !isloading && !error">no data available</p>
 <table class="table" *ngIf="!isloading && books.length >= 1">
   <thead>
     <tr>
@@ -39,5 +39,8 @@
   </tbody>
 </table>
 <div class="center-wrapper">
-  <mat-spinner *ngIf="isloading"></mat-spinner>
+  <mat-spinner *ngIf="isloading && !error"></mat-spinner>
+  <div class="alert alert-danger" *ngIf="error">
+    <p>{{error}}</p>
+  </div>
 </div>

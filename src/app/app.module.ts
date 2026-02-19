@@ -20,12 +20,14 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { DeliteBookDialogComponent } from './delite-book-dialog/delite-book-dialog.component';
 import { EditBookDialogComponent } from './edit-book-dialog/edit-book-dialog.component';
+import { MenuComponent } from './layout/menu/menu.component';
+import { MatNativeDateModule } from '@angular/material/core';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' }, // default
   { path: 'home', component: HomeComponent },
   { path: 'books', component: BooksComponent },
-  { path: '**', redirectTo: 'home' }, // wildcard for 404
+  { path: '**', redirectTo: 'home' },
 ];
 
 @NgModule({
@@ -36,6 +38,7 @@ const routes: Routes = [
     AddBookDialogComponent,
     DeliteBookDialogComponent,
     EditBookDialogComponent,
+    MenuComponent,
   ],
   imports: [
     BrowserModule,
@@ -50,7 +53,9 @@ const routes: Routes = [
     MatDatepickerModule,
     MatSelectModule,
     MatProgressSpinnerModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatNativeDateModule
+
   ],
   providers: [],
   bootstrap: [AppComponent],
