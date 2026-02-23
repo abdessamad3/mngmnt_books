@@ -20,7 +20,7 @@ export class AddBookDialogComponent implements OnInit {
     private dialogRef: MatDialogRef<AddBookDialogComponent>
   ) {
     this.clientForm = this.fb.group({
-      Name: ['dfldfk', Validators.required],
+      Name: ['', Validators.required],
       isbm: ['', Validators.required],
       price: [null, Validators.required],
       publishedAt:['',Validators.required],

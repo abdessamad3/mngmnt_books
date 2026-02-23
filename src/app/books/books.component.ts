@@ -20,7 +20,7 @@ export class BooksComponent implements OnInit {
     private dialog: MatDialog,
   ) {}
   ngOnInit(): void {
-    this.fetchdata();
+    this.fetchdata(); 
   }
   AddBookDialog() {
     const dialogRef = this.dialog.open(AddBookDialogComponent, {
