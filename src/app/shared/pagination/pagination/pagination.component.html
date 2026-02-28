@@ -1,0 +1,30 @@
+<div class="d-flex justify-content-between align-items-center mt-4">
+
+  <!-- 👇 THIS SHOWS THE TOTAL! -->
+  <div class="text-muted">
+    <i class="bi bi-book"></i>
+    Showing <strong>{{ startItem }}</strong> to <strong>{{ endItem }}</strong>
+    of <strong>{{ totalItems }}</strong> books  <!-- Shows "of 11 books" -->
+  </div>
+
+  <!-- Pagination buttons -->
+  <nav *ngIf="totalPages > 1">
+    <ul class="pagination mb-0">
+      <!-- Previous button -->
+      <li class="page-item" [class.disabled]="!hasPrevious">
+        <a class="page-link" href="#" (click)="previous(); $event.preventDefault()">
+          Previous
+        </a>
+      </li>
+
+      <!-- Page numbers will go here (we'll add in next question) -->
+
+      <!-- Next button -->
+      <li class="page-item" [class.disabled]="!hasNext">
+        <a class="page-link" href="#" (click)="next(); $event.preventDefault()">
+          Next
+        </a>
+      </li>
+    </ul>
+  </nav>
+</div>

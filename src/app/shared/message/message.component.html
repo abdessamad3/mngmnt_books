@@ -1,0 +1,25 @@
+<div *ngIf="messageService.message.show"
+     class="position-fixed bottom-0 end-0 m-3"
+     style="z-index: 9999; min-width: 300px;">
+
+  <div class="alert alert-{{ messageService.message.type }} alert-dismissible fade show shadow"
+       role="alert">
+
+    <!-- Icon based on type -->
+    <i class="bi me-2"
+       [ngClass]="{
+         'bi-check-circle-fill': messageService.message.type === 'success',
+         'bi-exclamation-triangle-fill': messageService.message.type === 'danger',
+         'bi-info-circle-fill': messageService.message.type === 'info',
+         'bi-exclamation-circle-fill': messageService.message.type === 'warning'
+       }"></i>
+
+    <!-- Message text -->
+    {{ messageService.message.text }}
+
+    <!-- Close button -->
+    <button type="button"
+            class="btn-close"
+            (click)="messageService.hide()"></button>
+  </div>
+</div>

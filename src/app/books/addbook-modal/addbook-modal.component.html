@@ -1,0 +1,117 @@
+<div class="modal-header">
+  <h4 class="modal-title">{{ modalTitle }}</h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="dismiss()"></button>
+</div>
+<div class="modal-body">
+    <form #bookForm="ngForm">
+    <!-- Book Name -->
+    <div class="mb-3">
+      <label for="name" class="form-label">Book Name <span class="text-danger">*</span></label>
+      <input
+        type="text"
+        class="form-control"
+        id="name"
+        name="name"
+        [(ngModel)]="bookData.name"
+        required
+        #name="ngModel"
+        [class.is-invalid]="name.invalid && name.touched"
+      />
+      <div *ngIf="name.invalid && name.touched" class="invalid-feedback">
+        Book name is required
+      </div>
+    </div>
+
+    <!-- ISBM -->
+    <div class="mb-3">
+      <label for="isbm" class="form-label">ISBM <span class="text-danger">*</span></label>
+      <input
+        type="text"
+        class="form-control"
+        id="isbm"
+        name="isbm"
+        [(ngModel)]="bookData.isbm"
+        required
+        #isbm="ngModel"
+        [class.is-invalid]="isbm.invalid && isbm.touched"
+      />
+      <div *ngIf="isbm.invalid && isbm.touched" class="invalid-feedback">
+        ISBM is required
+      </div>
+    </div>
+
+    <!-- Price -->
+    <div class="mb-3">
+      <label for="price" class="form-label">Price</label>
+      <div class="input-group">
+        <span class="input-group-text">$</span>
+        <input
+          type="number"
+          class="form-control"
+          id="price"
+          name="price"
+          [(ngModel)]="bookData.price"
+          min="0"
+          step="1"
+        />
+      </div>
+    </div>
+
+    <!-- Published At -->
+    <div class="mb-3">
+      <label for="publishedAt" class="form-label">Published At</label>
+      <input
+        type="date"
+        class="form-control"
+        id="publishedAt"
+        name="publishedAt"
+        [(ngModel)]="bookData.publishedAt"
+      />
+    </div>
+
+    <!-- Pages -->
+    <div class="mb-3">
+      <label for="pages" class="form-label">Pages</label>
+      <input
+        type="number"
+        class="form-control"
+        id="pages"
+        name="pages"
+        [(ngModel)]="bookData.pages"
+        min="1"
+      />
+    </div>
+
+    <!-- Language -->
+    <div class="mb-3">
+      <label for="language" class="form-label">Language</label>
+      <select
+        class="form-select"
+        id="language"
+        name="language"
+        [(ngModel)]="bookData.language"
+      >
+        <option *ngFor="let lang of languages" [value]="lang">
+          {{ lang | titlecase }}
+        </option>
+      </select>
+    </div>
+  </form>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-outline-secondary" (click)="dismiss()">
+    Cancel
+  </button>
+  <button
+    type="button"
+    class="btn"
+    [ngClass]="isAddMode ? 'btn-success' : 'btn-primary'"
+    (click)="save()"
+    [disabled]="!bookForm.form.valid">
+    <i class="bi" [ngClass]="isAddMode ? 'bi-plus-circle' : 'bi-pencil'"></i>
+    {{ submitButtonText }}
+  </button>
+</div>
+
+
+

@@ -22,6 +22,14 @@ import { DeliteBookDialogComponent } from './delite-book-dialog/delite-book-dial
 import { EditBookDialogComponent } from './edit-book-dialog/edit-book-dialog.component';
 import { MenuComponent } from './layout/menu/menu.component';
 import { MatNativeDateModule } from '@angular/material/core';
+import { AddbookModalComponent } from './books/addbook-modal/addbook-modal.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { DeleteBookModalComponent } from './books/delete-book-modal/delete-book-modal.component';
+import { MessageComponent } from './shared/message/message.component';
+import { SharedModule } from './shared/shared/shared.module';
+import { PaginationComponent } from './shared/pagination/pagination/pagination.component';
+import { SearchBarComponent } from './shared/search-bar/search-bar.component';
+import { ListBooksComponent } from './books/list-books/list-books.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' }, // default
@@ -39,6 +47,9 @@ const routes: Routes = [
     DeliteBookDialogComponent,
     EditBookDialogComponent,
     MenuComponent,
+    AddbookModalComponent,
+    DeleteBookModalComponent,
+    ListBooksComponent,
   ],
   imports: [
     BrowserModule,
@@ -54,8 +65,13 @@ const routes: Routes = [
     MatSelectModule,
     MatProgressSpinnerModule,
     ReactiveFormsModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    NgbModule,
+    SharedModule
 
+  ],
+  entryComponents: [
+    AddbookModalComponent  // Required for Angular 14
   ],
   providers: [],
   bootstrap: [AppComponent],

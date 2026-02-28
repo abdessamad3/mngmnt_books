@@ -4,31 +4,55 @@ import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { book } from './books/books.model';
+import { pagination } from './shared/pagination/pagination.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AppService {
-private apiUrl = environment.apiUrl;
+  private apiUrl = environment.apiUrl;
   private token =
-    'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3NzE4NDYwMjYsImV4cCI6MTc3MTg0OTYyNiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoiYWJkZXNzYW1hZGppYnJhbmUyQGdtYWlsLmNvbSJ9.uN3UbEtgpASh2YyTLZWF42HxDdBbx9s9C9cvtRc1F3G3A6Wx4ZXKCZPKpfNxgBnRLsKomINn6RBRNq8EA5epHx9OB1StZwaW4YZ6CYvo3giElSXHcxHaLHaa7a6nlC2zlXbj_XPKF4xtbLFegeHo6YGwAc6RXES7K3tMAO97IuAfUe7Mc1qC209yQV9laXchGZHn0kdtboEqnad4udm41ZN07kuE-WasaHwZCX4x1oejCEf6GSA5_FZZZd198mWg9RYDaquOwFdYoccpfOj6QIN19F9180_U5NoYgCejsOJORzE-HSUTPnAcCqlUKT-Gxs6yjm40JePbXOmTgtJRjg'; // or a hardcoded token for testing
+    'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3NzIyOTgxMTksImV4cCI6MTc3MjMwMTcxOSwicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoiYWJkZXNzYW1hZGppYnJhbmUyQGdtYWlsLmNvbSJ9.O1qhiVGonDhFtK4-HYrNzBTHrq1nsDO57uWFaut2A0Gv3uBAWapgy0a5rFHS5Stq7M5qxlVX046nU3DDa_dxnuD22RypXu2klHhU0P3AytAYwMy7indxMkEPY3sQgZdd5fbm7OEHbkRMuY_EKxr0JyQbLeyZqVpG8NAKIIUgjr7ku6opMzSOk0-5aSEbI8O4sB3EAvil0VYVfote_UhotWRkSx3iz84jAPAfHpVNEExSBVVVf0QmHomQI4B_2qWDQ_1ix7QVGuQ8CwNLrqN_MKHhCTEP-JIHubl3JgqablV_sxGbqHHXxi-oF6uo75JkeFJbj6_y5T0hxLAM-xeKjg'; // or a hardcoded token for testing
 
-    //change the type expected from book to T
+  //change the type expected from book to T
   constructor(private http: HttpClient) {}
 
-  getData(endpoint: string): Observable<book[]> {
+  getData(
+    endpoint: string,
+    page,
+    limit,
+  ): Observable<{ data: book[]; pagination: pagination }> {
     const headers = this.token
       ? new HttpHeaders({ Authorization: `Bearer ${this.token}` })
       : undefined;
 
-    return this.http.get<book[]>(`${this.apiUrl}/${endpoint}`, { headers });
+    return this.http.get<{ data: book[]; pagination: pagination }>(
+      `${this.apiUrl}/${endpoint}?page=${page}&limit=${limit}`,
+      { headers },
+    );
+  }
+
+  // Search with pagination (if backend supports it)
+  //add types
+  searchBooks(
+    endpoint: string,
+    term: string,
+    page: number = 1,
+    limit: number = 10,
+  ): Observable<{ data: book[]; pagination: pagination }> {
+    const headers = this.token
+      ? new HttpHeaders({ Authorization: `Bearer ${this.token}` })
+      : undefined;
+    return this.http.get<{ data: book[]; pagination: pagination }>(
+      `${this.apiUrl}/${endpoint}?search=${term}&page=${page}&limit=${limit}`,
+      { headers },
+    );
   }
 
   addData(endpoint: string, payload: book): Observable<book[]> {
     const headers = this.token
       ? new HttpHeaders({ Authorization: `Bearer ${this.token}` })
       : undefined;
-
     return this.http.post<book[]>(`${this.apiUrl}/${endpoint}`, payload, {
       headers,
     });
@@ -43,7 +67,8 @@ private apiUrl = environment.apiUrl;
     const headers = this.token
       ? new HttpHeaders({ Authorization: `Bearer ${this.token}` })
       : undefined;
-    return this.http.put(`${this.apiUrl}/${endpoint}/${id}`,  payload, { headers });
+    return this.http.put(`${this.apiUrl}/${endpoint}/${id}`, payload, {
+      headers,
+    });
   }
-
 }
