@@ -23,23 +23,83 @@
   Add Book
 </button>
 
+<!-- Search Component - Only triggers on Enter -->
+  <app-search-bar
+    (search)="onSearch($event)"
+    [initialValue]="lastSearchTerm">
+  </app-search-bar>
+
+  <!-- Results summary (optional) -->
+  <div *ngIf="lastSearchTerm && !isloading" class="mb-2">
+    <span class="badge bg-info">
+      Searching for: "{{lastSearchTerm}}"
+    </span>
+  </div>
+
+  <!-- Loading Indicator -->
+  <div *ngIf="isloading" class="text-center my-6">
+    <div class="spinner-border text-primary"></div>
+  </div>
 
 <!-- *ngIf="!isloading && books.length >= 1"-->
 <table class="table table-striped">
   <thead>
     <tr>
       <th>ID</th>
-      <th>Name</th>
-      <th>isbm</th>
-      <th>price</th>
-      <th>published At</th>
+      <!-- Title/Name Column - Sortable -->
+    <th (click)="onSort('name')"
+        style="cursor: pointer;"
+        [class.table-primary]="isSorted('name')">
+      <div class="d-flex align-items-center">
+        Title
+        <i class="bi ms-2" [class]="getSortIcon('name')"></i>
+        <!--<small *ngIf="isSorted('name')" class="text-muted">
+        {{ activeSort.order === 'asc' ? '(A → Z)' : '(Z → A)' }}
+      </small> -->
+      </div>
+    </th>
+
+      <!-- Title/Name Column - Sortable -->
+    <th (click)="onSort('isbm')"
+        style="cursor: pointer;"
+        [class.table-primary]="isSorted('isbm')">
+      <div class="d-flex align-items-center">
+        ISBN
+        <i class="bi ms-2" [class]="getSortIcon('isbm')"></i>
+        <!--<small *ngIf="isSorted('name')" class="text-muted">
+        {{ activeSort.order === 'asc' ? '(A → Z)' : '(Z → A)' }}
+      </small> -->
+      </div>
+    </th>
+    <th (click)="onSort('price')"
+        style="cursor: pointer;"
+        [class.table-primary]="isSorted('price')">
+      <div class="d-flex align-items-center">
+        Price
+        <i class="bi ms-2" [class]="getSortIcon('price')"></i>
+        <!--<small *ngIf="isSorted('name')" class="text-muted">
+        {{ activeSort.order === 'asc' ? '(A → Z)' : '(Z → A)' }}
+      </small> -->
+      </div>
+    </th>
+    <th (click)="onSort('publishedAt')"
+        style="cursor: pointer;"
+        [class.table-primary]="isSorted('publishedAt')">
+      <div class="d-flex align-items-center">
+        published At
+        <i class="bi ms-2" [class]="getSortIcon('publishedAt')"></i>
+        <!--<small *ngIf="isSorted('name')" class="text-muted">
+        {{ activeSort.order === 'asc' ? '(A → Z)' : '(Z → A)' }}
+      </small> -->
+      </div>
+    </th>
       <th>Pages</th>
       <th>Language</th>
       <th>actions</th>
     </tr>
   </thead>
   <tbody>
-    <tr *ngIf="isloading && !error">
+    <!--<tr *ngIf="isloading && !error">
       <td colspan="8">
         <div class="d-flex justify-content-center py-4">
           <div class="spinner-border text-primary me-3" role="status">
@@ -48,7 +108,7 @@
           <span class="text-muted">Loading ...</span>
         </div>
       </td>
-    </tr>
+    </tr>-->
     <tr *ngIf="books.length < 1 && !isloading && !error">
        <td colspan="8">
         <div class="d-flex justify-content-center py-4">
@@ -63,7 +123,7 @@
       <td>{{ book.name }}</td>
       <td>{{ book.isbm }}</td>
       <td>{{ book.price }}</td>
-      <td>{{ book.publishedAt | date: short }}</td>
+      <td>{{ book.publishedAt | date:'dd/MM/yyyy' }}</td>
       <td>{{ book.pages }}</td>
       <td>{{ book.language }}</td>
       <td>

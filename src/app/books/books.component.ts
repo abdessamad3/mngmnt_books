@@ -17,9 +17,33 @@ import { ActivatedRoute, Router } from '@angular/router';
   styleUrls: ['./books.component.css'],
 })
 export class BooksComponent implements OnInit {
-  books: book[] = [];
+ books: book[] = [];
   isloading = false;
   error = null;
+
+  // Search param
+  lastSearchTerm = '';
+
+  // ============== NEW: SORTING PROPERTIES ==============
+  sortColumn: string = 'id';           // Default sort by ID
+  sortOrder: 'asc' | 'desc' = 'desc';  // Default newest first (ID desc)
+
+  // For UI display
+  activeSort: {column: string, order: 'asc' | 'desc'} = {
+    column: 'id',
+    order: 'desc'
+  };
+
+  // Column display names for UI
+  columnLabels: {[key: string]: string} = {
+    'id': 'ID',
+    'name': 'Title',
+    'author': 'Author',
+    'publicationYear': 'Year',
+    'language': 'Language',
+    'isbn': 'ISBN'
+  };
+  // =====================================================
 
   // Pagination properties
   currentPage = 1;
@@ -28,6 +52,7 @@ export class BooksComponent implements OnInit {
   totalPages = 1;
   hasNext = false;
   hasPrevious = false;
+
   constructor(
     private BooksService: BooksService,
     private dialog: MatDialog,
@@ -37,38 +62,100 @@ export class BooksComponent implements OnInit {
     private router: Router,
   ) {}
 
+  // ============== UPDATED: fetchdata with sort parameters ==============
   fetchdata(): void {
     this.isloading = true;
-    console.log(
-      '📡 Fetching page:',
+
+    // Add sort parameters to the service call
+    this.BooksService.searchBooks(
       this.currentPage,
-      'limit:',
       this.itemsPerPage,
-    );
-    this.BooksService.getBooks(this.currentPage, this.itemsPerPage).subscribe({
+      this.lastSearchTerm,
+      this.sortColumn,     // <-- NEW: Add sort column
+      this.sortOrder       // <-- NEW: Add sort order
+    ).subscribe({
       next: (res) => {
         this.books = res.data;
         this.totalItems = res.pagination.totalItems;
         this.totalPages = res.pagination.totalPages;
         this.hasNext = res.pagination.hasNext;
         this.hasPrevious = res.pagination.hasPrevious;
-        // this.currentPage = res.pagination.currentPage;
         this.isloading = false;
         this.error = null;
-        console.log(this.books);
       },
       error: (err: any) => {
         this.isloading = false;
-        // err may be Error or HttpErrorResponse
         this.messageService.error(err);
       },
     });
   }
 
   ngOnInit(): void {
-
     this.fetchdata();
   }
+
+  onSearch(searchTerm: string): void {
+    this.lastSearchTerm = searchTerm;
+    this.currentPage = 1;
+    this.fetchdata();
+  }
+
+  // ============== NEW: SORTING METHODS ==============
+  /**
+   * Called when user clicks on a column header
+   * First click: A→Z (ascending)
+   * Second click: Z→A (descending)
+   */
+  onSort(column: string): void {
+    console.log(`Sorting by: ${column}`);
+
+    // If clicking the SAME column, toggle order
+    if (this.sortColumn === column) {
+      this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+    }
+    // If clicking a DIFFERENT column, start with asc (A→Z)
+    else {
+      this.sortColumn = column;
+      this.sortOrder = 'asc';
+    }
+
+    // Update UI state
+    this.activeSort = {
+      column: this.sortColumn,
+      order: this.sortOrder
+    };
+
+    // Reset to first page when sorting changes
+    this.currentPage = 1;
+
+    // Fetch data with new sort
+    this.fetchdata();
+  }
+
+  /**
+   * Get the appropriate Bootstrap icon for sort indicator
+   */
+  getSortIcon(column: string): string {
+    if (this.activeSort.column !== column) {
+      return 'bi-arrow-down-up'; // Unsorted (double arrow)
+    }
+    return this.activeSort.order === 'asc' ? 'bi-arrow-up' : 'bi-arrow-down';
+  }
+
+  /**
+   * Check if a column is currently sorted
+   */
+  isSorted(column: string): boolean {
+    return this.activeSort.column === column;
+  }
+
+  /**
+   * Get display name for column
+   */
+  getColumnLabel(column: string): string {
+    return this.columnLabels[column] || column;
+  }
+  // ==================================================
 
   openAddModal(): void {
     try {
@@ -85,7 +172,6 @@ export class BooksComponent implements OnInit {
       modalRef.result.then(
         (result: { action: string; book: book }) => {
           if (result.action === 'add') {
-            console.log('result.data: ' + result.book, 'result: ', result);
             try {
               this.BooksService.postData(result.book).subscribe((resp) => {
                 this.messageService.success('book added successfuly!');
@@ -165,10 +251,9 @@ export class BooksComponent implements OnInit {
 
   onPerPageChange(perPage: number) {
     this.itemsPerPage = perPage;
-    this.currentPage = 1; // Reset to first page
+    this.currentPage = 1;
     this.fetchdata();
   }
-
   //--------------------------------------------------Mat part---------------------------------------------------------------------------------------------
 
   AddBookDialog() {

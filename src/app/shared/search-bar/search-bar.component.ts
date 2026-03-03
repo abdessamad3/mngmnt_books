@@ -1,65 +1,32 @@
 import {
-  ChangeDetectionStrategy, Component, ElementRef, EventEmitter,
-  Input, OnDestroy, OnInit, Output, ViewChild, AfterViewInit
-} from '@angular/core';
-import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+  } from '@angular/core';
 
 @Component({
   selector: 'app-search-bar',
   templateUrl: './search-bar.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SearchBarComponent implements OnInit, AfterViewInit, OnDestroy {
-  @Input() placeholder = 'Search...';
-  @Input() debounceTime = 0;                // 👈 0 = immediate request per keystroke
-  @Input() disabled = false;
-  // @Input() initialValue = '';
-  @Input() size: 'sm' | 'md' | 'lg' = 'md';
-  @Input() backgroundColor = 'white';
-
+export class SearchBarComponent implements OnInit {
   @Output() search = new EventEmitter<string>();
-  @Output() clear = new EventEmitter<void>();
+  @Input() initialValue = '';
 
-  @ViewChild('inputElement') inputElement!: ElementRef;
+  @ViewChild('searchInput') searchInput!: ElementRef;
 
   searchTerm = '';
-  private searchSubject = new Subject<string>();
 
-  ngOnInit() {
-    // this.searchTerm = this.initialValue;
-    this.searchSubject.pipe(
-      debounceTime(this.debounceTime),
-      distinctUntilChanged()
-    ).subscribe(term => this.search.emit(term));
+  ngOnInit(): void {
+    this.searchTerm = this.initialValue;
   }
 
-  ngAfterViewInit() {
-    // Keep focus after view initialises
-    this.inputElement.nativeElement.focus();
-  }
-
-  ngOnDestroy() {
-    this.searchSubject.complete();
-  }
-
-  onSearchInput(): void {
-    this.searchSubject.next(this.searchTerm);
-  }
-
-  clearSearch(): void {
-    this.searchTerm = '';
-    this.search.emit('');
-    this.clear.emit();
-    // Refocus after clearing
-    this.inputElement.nativeElement.focus();
-  }
-
-  getSizeClass(): string {
-    switch (this.size) {
-      case 'sm': return 'form-control-sm';
-      case 'lg': return 'form-control-lg';
-      default: return '';
-    }
+  // Triggered when Enter key is pressed
+  onEnterPressed(): void {
+    const term = this.searchTerm.trim();
+    this.search.emit(term);
   }
 }

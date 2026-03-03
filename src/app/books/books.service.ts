@@ -10,7 +10,6 @@ import { pagination } from '../shared/pagination/pagination.model';
   providedIn: 'root',
 })
 export class BooksService {
-
   private booksSubject = new BehaviorSubject<book[]>([]);
   books$ = this.booksSubject.asObservable();
 
@@ -28,13 +27,22 @@ export class BooksService {
       }),
     );
   }
-  searchBooks(term: string, page: number, limit: number): Observable<{ data: book[]; pagination: pagination }> {
-    return this.appService.searchBooks(this.endpoint, term, page, limit).pipe(
-      catchError((err) => {
-        console.error('HTTP error', err);
-        return throwError('Failed to fetch books. Please try again later.');
-      }),
-    );
+
+  searchBooks(
+    page: number,
+    limit: number,
+    term?: string,
+    sortBy?: string,
+    sortOrder?: string,
+  ): Observable<{ data: book[]; pagination: pagination }> {
+    return this.appService
+      .searchBooks(this.endpoint, term, page, limit, sortBy, sortOrder)
+      .pipe(
+        catchError((err) => {
+          console.error('HTTP error', err);
+          return throwError('Failed to fetch books. Please try again later.');
+        }),
+      );
   }
   postData(payload: book): Observable<book[]> {
     return this.appService.addData(this.endpoint, payload).pipe(
